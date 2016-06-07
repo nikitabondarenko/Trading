@@ -10,6 +10,24 @@ library(Hmisc)
 options(scipen = 15, digits.secs = 6)
 dat <- fread('book_ts.csv', header = TRUE)
 
+convert_time <- function(tim){
+  yr <- substr(tim,1,4)
+  mo <- substr(tim,5,6)
+  da <- substr(tim,7,8)
+  hr <- substr(tim,9,10)
+  mn <- substr(tim,11,12)
+  sec <- substr(tim,13,14)
+  de <- substr(tim,15,20)
+  date <- paste(yr, mo, da, sep = '-')
+  ttim <- paste(hr, mn, sec, sep = ':')
+  stim <- paste(ttim, de, sep = '.')
+  dt <- paste(date, stim, sep = ' ')
+  return(strftime(dt, '%Y-%m-%d %H:%M:%OS6'))
+}
+
+dat[,Time:= convert_time(Time)]
+dat[,Time:= as.POSIXct(Time)]
+
 convert_time_fast <- function(tim){  
   b <- tim - tim%/%10^12*10^12
   # hhmmssffffff
